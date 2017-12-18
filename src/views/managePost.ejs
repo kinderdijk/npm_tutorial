@@ -1,0 +1,50 @@
+<html>
+    <head>
+        <title>Thoughts</title>
+        <link href="lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+        
+        <style>
+            .jumbotron {
+                margin-bottom: 0px;
+            }
+            
+            .navbar {
+                border-radius: 0px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="jumbotron">
+            <div class="container text-center">
+                <h1>Great Thoughts Blog</h1>
+                <p>This is the description</p>
+            </div>
+        </div>
+        
+        <nav class="navbar navbar-inverse">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>                        
+                </button>
+                <div class="navbar-brand"><img src="testicon.png"></div>
+            </div>
+            <div class="collapse navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">Posts</a></li>
+                    <li class="active"><a href="/Post/edit">My Posts</a></li>
+                </ul>
+            </div>
+        </nav>
+        
+        <div class="container">
+            <% for(var i=0; i<posts.length; i++) {%>
+            <h3><%= posts[i].title%></h3>
+            <p><%= posts[i].content%></p>
+            <% } %>
+        </div>
+    </body>
+</html>
