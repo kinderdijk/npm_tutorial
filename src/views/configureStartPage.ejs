@@ -31,7 +31,11 @@
         
         <div class="container">
             <div class="col-sm-9">
-                <%=post%>
+                <select>
+                    <% for(var i=0; i<currentPosts.length; i++) {%>
+                    <option value="<%=currentPosts[i]._id%>"><%= currentPosts[i].title%></option>
+                    <% } %>
+                </select>
             </div>
             <div class="col-sm-3">
                 This is the sidebar.
