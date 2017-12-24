@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node app.js"
+    "start": "node app.js",
+    "compile": "jsx -x jsx ./src/jsx ./public/lib/js"
   },
   "author": "Jon Pendlebury",
   "license": "MIT",
@@ -13,6 +13,7 @@
     "assert": "^1.4.1",
     "ejs": "^2.5.7",
     "express": "^4.16.2",
-    "mongodb": "^3.0.0-rc0"
+    "mongodb": "^3.0.0-rc0",
+    "util": "^0.10.3"
   }
 }
