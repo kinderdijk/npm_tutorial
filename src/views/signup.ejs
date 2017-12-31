@@ -1,0 +1,38 @@
+<html>
+    <head>
+        <% include ../partial/head.ejs %>
+    </head>
+    <body>
+        <div class="jumbotron">
+            <div class="container text-center">
+                <h1>Great Thoughts Blog</h1>
+                <p>This is the description</p>
+            </div>
+        </div>
+        
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3" style="margin-top: 50px;">
+                    <form action="/auth/signup" id="signupForm" method="post">
+                        <div class="row">
+                            <div class="col-xs-6 col-md-6">
+                                <input type="text" name="firstname" value="" class="form-control input-lg" placeholder="First Name"  />
+                            </div>
+                            <div class="col-xs-6 col-md-6">
+                                <input type="text" name="lastname" value="" class="form-control input-lg" placeholder="Last Name"  />
+                            </div>
+                        </div>
+                        <input type="text" name="email" value="" class="form-control input-lg" placeholder="Your Email"  />
+                        <input type="text" name="username" values="" class="form-control input-lg" placeholder="Username" />
+                        <input type="password" name="password" value="" class="form-control input-lg" placeholder="Password"  />
+                        <input type="password" name="confirm_password" value="" class="form-control input-lg" placeholder="Confirm Password"  />
+                        
+                        <div class="form-group text-center">
+                            <button type="submit" class="btn btn-primary center-block">Signup</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

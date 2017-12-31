@@ -24,18 +24,23 @@
                     <li><a href="/">Home</a></li>
                     <li><a href="#">About</a></li>
                     <li><a href="#">Posts</a></li>
-                    <li class="active"><a href="/Post/edit">My Posts</a></li>
+                    <li class="active"><a href="/Post/manage">My Posts</a></li>
                 </ul>
             </div>
         </nav>
         
         <div class="container">
+            <div class="row">
+                <a class="btn btn-success" href="/Post/edit">
+                    New Post
+                </a>
+            </div>
             <% for(var i=0; i<posts.length; i++) { %>
             <div class="panel">
                 <div class="panel-heading">
                     <div class="row">
                         <div class="col-lg-12">
-                            <div class="btn btn-warning">Edit</div>
+                            <a class="btn btn-warning" href="/Post/edit?postID=<%=posts[i]._id%>">Edit</a>
                             <div class="btn btn-danger">Delete</div>
                             <% if (posts[i].published) { %>
                             <div class="btn btn-success">Unpublish</div>
@@ -58,7 +63,7 @@
                 </div>
                 
                 <div class="panel-body">
-                    <%= posts[i].content %>
+                    <%- posts[i].content %>
                 </div>
                 
                 <div class="panel-footer">
