@@ -9,6 +9,8 @@ var expressSession = require('express-session');
 
 var db = require('./src/config/database');
 
+var mathjax = require('mathjax-node');
+
 var app = express();
 
 var port = 2468;
@@ -58,10 +60,40 @@ app.get('/', function(req, res) {
         collection.find().sort(mysort).toArray(function(err, result) {
             database.close()
             latestPost = result[0].content;
-            res.render('intro.ejs', {post: latestPost, loggedIn: req.isAuthenticated()});
+            console.log('User: ' + req.user);
+            res.render('intro.ejs', {post: latestPost, loggedIn: req.isAuthenticated(), user: req.user});
         });
     });
 });
+
+
+
+// Mathjax test function
+// This works !!!!BUT!!!! Chrome does not support the MathML format. These equations can be viewed in Firefox or Safari browsers.
+app.get('/test', function(req, res) {
+    mathjax.config({
+        displayMessages: false, // determines whether Message.Set() calls are logged
+        displayErrors:   true, // determines whether error messages are shown on the console
+        undefinedCharError: false, // determines whether "unknown characters" (i.e., no glyph in the configured fonts) are saved in the error array
+        extensions: '', // a convenience option to add MathJax extensions
+        fontURL: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/fonts/HTML-CSS', // for webfont urls in the CSS for HTML output
+    });
+    
+    mathjax.start();
+    
+    var mathString = 'A_{m,n} = \\begin{pmatrix}a_{1,1} & a_{1,2} & \\cdots & a_{1,n} \\\\ a_{2,1} & a_{2,2} & \\cdots & a_{2,n} \\\\ \\vdots  & \\vdots  & \\ddots & \\vdots  \\\\ a_{m,1} & a_{m,2} & \\cdots & a_{m,n} \\end{pmatrix}';
+    
+    mathjax.typeset({
+        math: mathString,
+        format: "TeX", // "inline-TeX", "MathML"
+        mml:true, //  svg:true,
+    }, function (data) {
+        if (!data.errors) {console.log(data.mml)}
+        res.render('test', {data: data});
+    });
+})
+
+
 
 // Start the server listening for activity on the given port.
 app.listen(port, function(err) {
