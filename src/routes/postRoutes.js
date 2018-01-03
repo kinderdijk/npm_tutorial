@@ -2,12 +2,18 @@ var express = require('express');
 var postRouter = express.Router();
 var mongoClient = require('mongodb').MongoClient;
 var objectID = require('mongodb').ObjectID;
-var assert = require('assert');
-var util = require('util');
 
+// TODO: Likely need to add these to a function that the app calls and then
+// pass in the database function with the URL so that does not need to be redfined all the time.
+
+
+// TODO: Need to add a preview button to this page, that will parse out the math formulas and 
+// show the user what they look like.
+// TODO: Need to parse the input of the text field and find all the instances of an equation.
+// Then escape them properly and replace them with the mathML equivalent.
 postRouter.route('/edit').all(function(req,res,next) {
     if(req.isAuthenticated()){
-        //if user is looged in, req.isAuthenticated() will return true 
+        //if user is logged in, req.isAuthenticated() will return true 
         next();
     } else{
         res.redirect('/auth/login');
@@ -18,7 +24,6 @@ postRouter.route('/edit').all(function(req,res,next) {
         var url = 'mongodb://localhost:27017/postLibrary';
         
         mongoClient.connect(url, function(err, database) {
-            assert.equal(null, err);
 
             if (database.isConnected()) {
                 var myDb = database.db('postLibrary');
@@ -52,7 +57,6 @@ postRouter.route('/manage').all(function(req, res, next) {
     var url = 'mongodb://localhost:27017/postLibrary';
         
     mongoClient.connect(url, function(err, database) {
-        assert.equal(null, err);
         console.log('Connection to the database correctly: ' + database);
         
         if (database.isConnected()) {
@@ -88,6 +92,7 @@ postRouter.route('/write').all(function(req, res, next) {
     let postID = req.query.postID;
     
     // setup a schema for this?
+    // Use the name of the authenticated user for the author in this aspect.
     var postInsert = 
         {
             title: title,

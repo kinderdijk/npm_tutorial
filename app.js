@@ -9,7 +9,8 @@ var expressSession = require('express-session');
 
 var db = require('./src/config/database');
 
-var mathjax = require('mathjax-node');
+var mathjax = require('./src/config/mathjax');
+mathjax.config();
 
 var app = express();
 
@@ -71,27 +72,12 @@ app.get('/', function(req, res) {
 // Mathjax test function
 // This works !!!!BUT!!!! Chrome does not support the MathML format. These equations can be viewed in Firefox or Safari browsers.
 app.get('/test', function(req, res) {
-    mathjax.config({
-        displayMessages: false, // determines whether Message.Set() calls are logged
-        displayErrors:   true, // determines whether error messages are shown on the console
-        undefinedCharError: false, // determines whether "unknown characters" (i.e., no glyph in the configured fonts) are saved in the error array
-        extensions: '', // a convenience option to add MathJax extensions
-        fontURL: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/fonts/HTML-CSS', // for webfont urls in the CSS for HTML output
+    var mathString = '\\int\\limits_0^\\infty x^2\\mathrm{d}x';
+    
+    mathjax.writeEquation(mathString, function(err, result) {
+        res.render('test', {data: result});
     });
-    
-    mathjax.start();
-    
-    var mathString = 'A_{m,n} = \\begin{pmatrix}a_{1,1} & a_{1,2} & \\cdots & a_{1,n} \\\\ a_{2,1} & a_{2,2} & \\cdots & a_{2,n} \\\\ \\vdots  & \\vdots  & \\ddots & \\vdots  \\\\ a_{m,1} & a_{m,2} & \\cdots & a_{m,n} \\end{pmatrix}';
-    
-    mathjax.typeset({
-        math: mathString,
-        format: "TeX", // "inline-TeX", "MathML"
-        mml:true, //  svg:true,
-    }, function (data) {
-        if (!data.errors) {console.log(data.mml)}
-        res.render('test', {data: data});
-    });
-})
+});
 
 
 
