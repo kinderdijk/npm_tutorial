@@ -33,7 +33,15 @@ postRouter.route('/edit').all(function(req,res,next) {
                 // The findOne function returns a promise. Not a standard object.
                 var result = postCollection.findOne({_id: new objectID(postID)});
                 result.then(function(postValues) {
-                    res.render('editPost', {post: postValues});
+                    
+                    // Remove paragraph and breaks
+                    var formattedContent = postValues.content.replace(/(?:<\/p><p>)/g, '\r\n\r\n').replace(/<br\/>/g, '\r\n').replace(/<p>/, '').replace(/<\/p>/, '');
+                    
+                    // Remove images tags
+                    formattedContent = formattedContent.replace(/<img.*src="(.*\..{3,})">/, '{image: $1}');
+                    
+                    postValues.content = formattedContent;
+                    res.render('editPost', {post: postValues, loggedIn: req.isAuthenticated, user: req.user});
                 });
                 database.close();
                 
@@ -42,7 +50,7 @@ postRouter.route('/edit').all(function(req,res,next) {
             }
         });
     } else {
-        res.render('editPost', {post: ''});
+        res.render('editPost', {post: '', loggedIn: req.isAuthenticated, user: req.user});
     }
     
 });
@@ -69,7 +77,7 @@ postRouter.route('/manage').all(function(req, res, next) {
                 currentPosts = results;
                 
                 database.close();
-                res.render('managePost', {posts: currentPosts});
+                res.render('managePost', {posts: currentPosts, loggedIn: req.isAuthenticated, user: req.user});
             });
         } else {
             console.log('Database is not connected.');
@@ -89,18 +97,20 @@ postRouter.route('/write').all(function(req, res, next) {
     let timestamp = new Date();
     let thumbnail = '';
     
+    var newString = content.replace(/(?:\r\n){2,}/g, '</p><p>').replace(/\r\n/g, '<br/>').replace(/\{image\: ?(.*\..{3,})\}/, '<img src="$1">');
+    var htmlContent = '<p>' + newString + '</p>';
+    
     let postID = req.query.postID;
     
     // setup a schema for this?
-    // Use the name of the authenticated user for the author in this aspect.
     var postInsert = 
         {
             title: title,
-            content: content,
+            content: htmlContent,
             timestamp: timestamp,
             thumbnail: thumbnail,
             published: false,
-            author: 'Jon Pendlebury',
+            author: req.user._id,
             tag: ''
         };
     
@@ -118,7 +128,7 @@ postRouter.route('/write').all(function(req, res, next) {
             
             if(postID) {
                 var query = {_id: new objectID(postID)};
-                var values = { $set : {title: title, content: content} }
+                var values = { $set : {title: title, content: htmlContent} }
                 
                 collection.updateOne(query, values, function(err, response) {
                     if (err) console.log(err);
@@ -137,7 +147,7 @@ postRouter.route('/write').all(function(req, res, next) {
         }
     });
     
-    res.send('DB connection created and closed successfully.');
+    res.redirect('/Post/manage');
 });
 
 module.exports = postRouter;

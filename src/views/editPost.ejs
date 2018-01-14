@@ -24,7 +24,7 @@
                 <% if(post !== '') { %>
                 <input class="form-control input-lg" type="text" name="title" value="<%= post.title %>"/><br />
                 <label>Content:</label><br />
-                <textarea class="form-control input-lg" name="content" rows="20" cols="120"><%= post.content %></textarea><br />
+                <textarea class="form-control input-lg" name="content" rows="20" cols="120"><%- post.content %></textarea><br />
                 <% } else {%>
                 <input class="form-control input-lg" type="text" name="title" placeholder="Post Title"/><br />
                 <textarea class="form-control input-lg" name="content" rows="20" cols="120" placeholder="Post Content"></textarea><br />

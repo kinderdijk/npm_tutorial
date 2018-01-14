@@ -9,6 +9,7 @@ module.exports = {
             undefinedCharError: false, // determines whether "unknown characters" (i.e., no glyph in the configured fonts) are saved in the error array
             extensions: '', // a convenience option to add MathJax extensions
             fontURL: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/fonts/HTML-CSS', // for webfont urls in the CSS for HTML output
+            MathJax: {}
         });
     },
     
