@@ -2,6 +2,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var assert = require('assert');
 var mongoClient = require('mongodb').MongoClient;
+var fileUpload = require('express-fileupload');
 
 var cookieParser = require('cookie-parser');
 var passport = require('passport');
@@ -19,6 +20,7 @@ var port = 2468;
 // Parses the body of post requests.
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
+app.use(fileUpload());
 // Addes the location of static files to the server.
 app.use(express.static('public'));
 app.use(express.static('src/img'));

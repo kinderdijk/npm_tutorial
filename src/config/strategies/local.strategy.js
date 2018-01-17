@@ -1,6 +1,7 @@
 var passport = require('passport');
 var Strategy = require('passport-local').Strategy;
 var mongoClient = require('mongodb').MongoClient;
+var fs = require('fs');
 
 var crypto = require('crypto');
 
@@ -21,6 +22,15 @@ module.exports = function(db) {
                     
                     if (results[0].password == generatedHash) {
                         var user = results[0]._id;
+                        
+                        var userImageDir = '/Users/jonathonpendlebury/Documents/dht_ble/npm_tutorial/src/img/' + user;
+                        fs.access(userImageDir, function(err) {
+                            if (err && err.code === 'ENOENT') {
+                                console.log('Making new directory for this user.');
+                                fs.mkdir(userImageDir);
+                            }
+                        });
+                        
                         done(null, user);
                     } else {
                         done(null, false, {message: 'Bad password'});

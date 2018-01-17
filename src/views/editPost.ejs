@@ -20,7 +20,7 @@
                     </form>
                 </div>
             </div>
-            <form action="/Post/write?postID=<%=post._id%>" method="POST">
+            <form action="/Post/write?postID=<%=post._id%>" method="POST" encType="multipart/form-data">
                 <% if(post !== '') { %>
                 <input class="form-control input-lg" type="text" name="title" value="<%= post.title %>"/><br />
                 <label>Content:</label><br />
@@ -30,7 +30,8 @@
                 <textarea class="form-control input-lg" name="content" rows="20" cols="120" placeholder="Post Content"></textarea><br />
                 <% } %>
                 <div class="form-group text-center">
-                    <button type="submit" class="btn btn-primary center-block">Submit</button>
+                    <input type="file" name="image_upload" />
+                    <input type="submit" class="btn btn-primary center-block" name="Submit" />
                 </div>
             </form>
         </div>
