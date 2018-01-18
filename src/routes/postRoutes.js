@@ -39,7 +39,7 @@ postRouter.route('/edit').all(function(req,res,next) {
                     var formattedContent = postValues.content.replace(/(?:<\/p><p>)/g, '\r\n\r\n').replace(/<br\/>/g, '\r\n').replace(/<p>/, '').replace(/<\/p>/, '');
 
                     // Remove images tags
-                    formattedContent = formattedContent.replace(/<img.*src="(.*\..{3,})">/, '{image: $1}');
+                    formattedContent = formattedContent.replace(/<img.*src="(\/.*\/)(\w*\.\w{3,})">/, '{image: $2}');
 
                     postValues.content = formattedContent;
                     res.render('editPost', {post: postValues, loggedIn: req.isAuthenticated, user: req.user});
@@ -98,15 +98,18 @@ postRouter.route('/write').all(function(req, res, next) {
     let timestamp = new Date();
     let thumbnail = '';
 
-    var newString = content.replace(/(?:\r\n){2,}/g, '</p><p>').replace(/\r\n/g, '<br/>').replace(/\{image\: ?(.*\..{3,})\}/, '<img src="./img/' + req.user._id + '/$1">');
+    var userUrl = '/Users/jonathonpendlebury/Documents/dht_ble/npm_tutorial/src/img/' + req.user._id + '/';
+    var newString = content.replace(/(?:\r\n){2,}/g, '</p><p>').replace(/\r\n/g, '<br/>').replace(/\{image\: ?(.*\..{3,})\}/, '<img src="' + userUrl + '$1">');
     var htmlContent = '<p>' + newString + '</p>';
 
     let postID = req.query.postID;
     let upload_image = req.files.image_upload;
 
-    upload_image.mv('/Users/jonathonpendlebury/Documents/dht_ble/npm_tutorial/src/img/' + req.user._id + '/' + upload_image.name, function(err) {
-        console.log('Moving err: ' + err);
-    });
+    if (upload_image) {
+        upload_image.mv(userUrl + upload_image.name, function(err) {
+            console.log('Moving err: ' + err);
+        });
+    }
 
     // setup a schema for this?
     var postInsert = 
