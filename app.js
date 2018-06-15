@@ -43,7 +43,7 @@ require('./src/config/passport')(app);
 
 // Configure the external routing files.
 var postRouter = require('./src/routes/postRoutes');
-app.use('/Post', postRouter);
+app.use('/post', postRouter);
 
 var adminRouter = require('./src/routes/adminRoutes');
 app.use('/admin', adminRouter);
@@ -62,25 +62,39 @@ app.get('/', function(req, res) {
         var mysort = { timestamp: -1 };
         collection.find().sort(mysort).toArray(function(err, result) {
             database.close()
-            latestPost = result[0].content;
-            console.log('User: ' + req.user);
-            res.render('intro.ejs', {post: latestPost, loggedIn: req.isAuthenticated(), user: req.user});
+            if(result[0]) {
+                latestPost = result[0].content;
+                res.render('intro.ejs', {post: latestPost, loggedIn: req.isAuthenticated(), user: req.user});
+            } else {
+                res.render('intro', {post: 'Latest post', loggedIn: req.isAuthenticated(), user: req.user});
+            }
         });
     });
 });
 
-
-
-// Mathjax test function
-// This works !!!!BUT!!!! Chrome does not support the MathML format. These equations can be viewed in Firefox or Safari browsers.
-app.get('/test', function(req, res) {
-    var mathString = '\\int\\limits_0^\\infty x^2\\mathrm{d}x';
-    
-    mathjax.writeEquation(mathString, function(err, result) {
-        res.render('test', {data: result});
-    });
+app.get('/about', function(req, res) {
+    res.render('about.ejs', {post: '', loggedIn: req.isAuthenticated(), user: req.user});
 });
 
+postRouter.route('/imageUpload').all(function(req, res, next) {
+    if(req.isAuthenticated()) {
+        next();
+    } else {
+        res.redirect('/auth/login');
+    }
+}).post(function(req, res) {
+    var userUrl = '/Users/jonathonpendlebury/Documents/dht_ble/npm_tutorial/src/img/' + req.user._id + '/';
+
+    let upload_image = req.files.image_upload;
+    
+    console.log(req.file);
+
+    if (upload_image) {
+        upload_image.mv(userUrl + upload_image.name, function(err) {
+            console.log('Moving err: ' + err);
+        });
+    }
+});
 
 
 // Start the server listening for activity on the given port.

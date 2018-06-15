@@ -14,26 +14,39 @@
         
         <div class="container">
             <div class="row">
-                <div class="col-md-6 col-md-offset-3">
-                    <form action="/Post/write?postID=<%=post._id%>" method="POST">
-                        
+                <div class="col-md-9">
+                    <form action="/Post/write?postID=<%=post._id%>" method="POST" encType="multipart/form-data">
+                        <% if(post !== '') { %>
+                        <input class="form-control input-lg" type="text" name="title" value="<%= post.title %>"/><br />
+                        <label>Content:</label><br />
+                        <textarea class="form-control input-lg" name="content" rows="20" cols="120"><%- post.content %></textarea><br />
+                        <% } else {%>
+                        <input class="form-control input-lg" type="text" name="title" placeholder="Post Title"/><br />
+                        <textarea class="form-control input-lg" name="content" rows="20" cols="120" placeholder="Post Content"></textarea><br />
+                        <% } %>
+
+                        <div class="form-group text-center">
+                            <input type="submit" class="btn btn-primary center-block" name="Submit" />
+                        </div>
                     </form>
                 </div>
-            </div>
-            <form action="/Post/write?postID=<%=post._id%>" method="POST" encType="multipart/form-data">
-                <% if(post !== '') { %>
-                <input class="form-control input-lg" type="text" name="title" value="<%= post.title %>"/><br />
-                <label>Content:</label><br />
-                <textarea class="form-control input-lg" name="content" rows="20" cols="120"><%- post.content %></textarea><br />
-                <% } else {%>
-                <input class="form-control input-lg" type="text" name="title" placeholder="Post Title"/><br />
-                <textarea class="form-control input-lg" name="content" rows="20" cols="120" placeholder="Post Content"></textarea><br />
-                <% } %>
-                <div class="form-group text-center">
-                    <input type="file" name="image_upload" />
-                    <input type="submit" class="btn btn-primary center-block" name="Submit" />
+                <div class="col-md-3">
+                    <table class="table table-condensed table-hover">
+                        <thead>
+                            <tr>
+                                <td><b>Uploaded Files</b></td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% for(var i=0; i<files.length; i++) { %>
+                            <tr>
+                                <td><%= files[i] %></td>
+                            </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
                 </div>
-            </form>
+            </div>
         </div>
     </body>
 </html>

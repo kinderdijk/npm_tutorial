@@ -6,3 +6,8 @@ node_modules
 
 #bower dependencies
 public/lib/
+
+/src/img/
+
+.*
+!.gitignore

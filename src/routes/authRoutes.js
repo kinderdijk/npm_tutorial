@@ -18,6 +18,11 @@ authRouter.route('/login').get(function(req, res) {
     res.render('login');
 });
 
+authRouter.route('/logout').get(function(req, res) {
+    req.logout();
+    res.redirect('/');
+});
+
 authRouter.route('/signup').post(function(req, res) {
     var url = 'mongodb://localhost:27017/postLibrary';
     
@@ -53,8 +58,7 @@ authRouter.route('/signup').post(function(req, res) {
                     lastname: req.body.lastname,
                     email: req.body.email,
                     username: req.body.username,
-                    password: generatedHash,
-                    salt: salt
+                    password: salt + generatedHash
                 }
 
                 collection.insertOne(user, function(err, response) {
@@ -69,7 +73,7 @@ authRouter.route('/signup').post(function(req, res) {
         });
     });
     
-    res.render('signup');
+    res.redirect('/');
 }).get(function(req, res) {
     res.render('signup');
 });

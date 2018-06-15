@@ -16,9 +16,11 @@ module.exports = function(db) {
                     done(null, false, {message: 'More than one username in the database.'});
                 } else if (results.length == 1) {
                     const hash = crypto.createHash('sha512');
-                    var saltPass = password + results[0].salt;
+                    var saltValue = results[0].password.substring(0,20);
+                    var saltPass = password + saltValue;
                     hash.update(saltPass, 'utf-8');
                     generatedHash = hash.digest('hex');
+                    generatedHash = saltValue + generatedHash;
                     
                     if (results[0].password == generatedHash) {
                         var user = results[0]._id;

@@ -1,0 +1,38 @@
+<html>
+    <head>
+        <% include ../partial/head.ejs %>
+    </head>
+    <body>
+        <div class="jumbotron">
+            <div class="container text-center">
+                <h1>Great Thoughts Blog</h1>
+                <p>This is the description</p>
+            </div>
+        </div>
+        
+        <%- include ../partial/navbar.ejs %>
+        
+        <div class="container">
+            <form action="/Post/fileUpload" method="POST" encType="multipart/form-data">
+                <input type="file" id="image_upload" name="image_upload" />
+                <input type="submit" class="btn btn-primary center-block" name="Submit" />
+            </form>
+            <table class="table table-condensed table-hover">
+                <thead>
+                    <tr>
+                        <td><b>Filename</b></td>
+                        <td><b>Action</b></td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% for(var i=0; i<files.length; i++) { %>
+                    <tr>
+                        <td><%= files[i] %></td>
+                        <td><a class="btn btn-warn" href="#">Delete</a></td>
+                    </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </body>
+</html>

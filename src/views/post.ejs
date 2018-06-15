@@ -13,9 +13,12 @@
         <% include ../partial/navbar.ejs %>
         
         <div class="container">
-            <% for(var i=0; i<posts.length; i++) {%>
-            <h3><%= posts[i].title%></h3>
-            <p><%= posts[i].content%></p>
+            <% for(var i=0; i<posts.length; i++) {
+                var content = posts[i].content.substring(0,500).concat('...'); %>
+            <h3><a href="/post/readPost?postID=<%=posts[i]._id%>"><%= posts[i].title%></a></h3>
+            <h6><%= posts[i].author%></h6>
+            <!--  This format allows the html to come through. Could be a security risk.  -->
+            <p><%- content %></p>
             <% } %>
         </div>
     </body>
