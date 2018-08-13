@@ -2,6 +2,7 @@ var express = require('express');
 var authRouter = express.Router();
 var mongoClient = require('mongodb').MongoClient;
 var passport = require('passport');
+var db = require('../config/database');
 
 var crypto = require('crypto');
 var cryptoRandomString = require('crypto-random-string');
@@ -24,7 +25,7 @@ authRouter.route('/logout').get(function(req, res) {
 });
 
 authRouter.route('/signup').post(function(req, res) {
-    var url = 'mongodb://localhost:27017/postLibrary';
+    var url = db.url;
     
     mongoClient.connect(url, function(err, database) {
         if (err) console.log(err);

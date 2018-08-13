@@ -24,11 +24,11 @@
                     <div class="row">
                         <div class="col-lg-12">
                             <a class="btn btn-warning" href="/Post/edit?postID=<%=posts[i]._id%>">Edit</a>
-                            <a class="btn btn-danger" href="#">Delete</a>
+                            <a class="btn btn-danger" href="/post/delete?postID=<%=posts[i]._id%>">Delete</a>
                             <% if (posts[i].published) { %>
                             <a class="btn btn-success" href="#">Unpublish</a>
                             <% } else { %>
-                            <a class="btn btn-primary" href="#">Publish</a>
+                            <a class="btn btn-primary" href="/post/publish?postID=<%=posts[i]._id%>">Publish</a>
                             <% } %>
                         </div>
                         <div class="col-lg-9">

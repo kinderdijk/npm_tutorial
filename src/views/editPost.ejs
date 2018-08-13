@@ -20,11 +20,27 @@
                         <input class="form-control input-lg" type="text" name="title" value="<%= post.title %>"/><br />
                         <label>Content:</label><br />
                         <textarea class="form-control input-lg" name="content" rows="20" cols="120"><%- post.content %></textarea><br />
+                        <label>Category:</label><br />
+                        <input type="text" name="category" list="categoryList" autocomplete="off" value="<%=post.category%>"/>
+                        <datalist id="categoryList">
+                            <option value="-- None --">-- None --</option>
+                            <% for  (var i=0; i<categories.length; i++) { %>
+                            <option value="<%=categories[i].name%>"><%=categories[i].name%></option>
+                            <% } %>
+                        </datalist>
                         <% } else {%>
                         <input class="form-control input-lg" type="text" name="title" placeholder="Post Title"/><br />
                         <textarea class="form-control input-lg" name="content" rows="20" cols="120" placeholder="Post Content"></textarea><br />
+                        <label>Category:</label><br />
+                        <input type="text" name="category" list="categoryList" autocomplete="off"/>
+                        <datalist id="categoryList">
+                            
+                            <% for  (var i=0; i<categories.length; i++) { %>
+                            <option value="<%=categories[i].name%>"><%=categories[i].name%></option>
+                            <% } %>
+                        </datalist>
                         <% } %>
-
+ 
                         <div class="form-group text-center">
                             <input type="submit" class="btn btn-primary center-block" name="Submit" />
                         </div>

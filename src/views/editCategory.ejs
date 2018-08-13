@@ -1,0 +1,32 @@
+<html>
+    <head>
+        <% include ../partial/head.ejs %>
+    </head>
+    <body>
+        <div class="jumbotron">
+            <div class="container text-center">
+                <h1>Great Thoughts Blog</h1>
+                <p>This is the description</p>
+            </div>
+        </div>
+        
+        <%- include ../partial/navbar.ejs %>
+        
+        <div class="container">
+            <form action="/category/create?categoryID=<%=category._id%>" method="POST">
+                <% if (category) { %>
+                <label>Title:</label><br />
+                <input type="text" id="name" name="name" value="<%=category.name%>"/><br />
+                <label>Description:</label><br />
+                <textarea class="form-control input-lg" name="description"><%=category.description%></textarea>
+                <% } else { %>
+                <label>Title:</label><br />
+                <input type="text" id="name" name="name" /><br />
+                <label>Description:</label><br />
+                <textarea class="form-control input-lg" name="description"><%=category.description%></textarea>
+                <% } %>
+                <input type="submit" class="btn btn-primary center-block" name="Submit" />
+            </form>
+        </div>
+    </body>
+</html>

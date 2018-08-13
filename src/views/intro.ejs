@@ -13,9 +13,25 @@
         <%- include ../partial/navbar.ejs %>
         
         <div class="container">
-            <div>
+            <div class="col-md-9">
                 <!-- This syntax for the ejs is for non-escaped strings. This will render HTML in the post content as actual HTML. -->
                 <%-post%>
+            </div>
+            <div class="col-md-3">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <td>Categories</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% for (var i=0; i<categories.length; i++) { %>
+                        <tr>
+                            <td><a href="/search/category?categoryName=<%=categories[i].name%>"><%=categories[i].name%></a></td>
+                        </tr>
+                        <% } %>
+                    </tbody>
+                </table>
             </div>
         </div>
         

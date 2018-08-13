@@ -6,6 +6,8 @@ var fs = require('fs');
 var event = require('events');
 var multer = require('multer');
 
+var db = require('../config/database');
+
 // TODO: Likely need to add these to a function that the app calls and then
 // pass in the database function with the URL so that does not need to be redfined all the time.
 
@@ -30,20 +32,21 @@ postRouter.route('/edit').all(function(req,res,next) {
         files.push(file);
     })
     
-    if(postID) {
-        var url = 'mongodb://localhost:27017/postLibrary';
+    var url = db.url;    
 
-        mongoClient.connect(url, function(err, database) {
+    mongoClient.connect(url, function(err, database) {
 
-            if (database.isConnected()) {
-                var myDb = database.db('postLibrary');
-                var postCollection = myDb.collection('post');
+        if (database.isConnected()) {
+            var myDb = database.db('postLibrary');
+            var postCollection = myDb.collection('post');
 
-                var currentPosts = [];
+            var categoryCollection = myDb.collection('category');
+            var categories = [];
+            var currentPost;
+            if(postID) {
                 // The findOne function returns a promise. Not a standard object.
                 var result = postCollection.findOne({_id: new objectID(postID)});
                 result.then(function(postValues) {
-
                     // Remove paragraph and breaks
                     var formattedContent = postValues.content.replace(/(?:<\/p><p>)/g, '\r\n\r\n').replace(/<br\/>/g, '\r\n').replace(/<p>/, '').replace(/<\/p>/, '');
 
@@ -51,18 +54,24 @@ postRouter.route('/edit').all(function(req,res,next) {
                     formattedContent = formattedContent.replace(/<img.*src="(\/.*\/)(\w*\.\w{3,})">/, '{image: $2}');
 
                     postValues.content = formattedContent;
-                    res.render('editPost', {files: files, post: postValues, loggedIn: req.isAuthenticated(), user: req.user});
+                    currentPost = postValues;
                 });
-                database.close();
-
+                
+                categoryCollection.find().toArray(function(err, results) {
+                    categories = results;
+                    res.render('editPost', {files: files, post: currentPost, loggedIn: req.isAuthenticated(), user: req.user, categories: categories});
+                });
             } else {
-                console.log('Database is not connected.');
+                categoryCollection.find().toArray(function(err, results) {
+                    categories = results;
+                    res.render('editPost', {files: files, post: '', loggedIn: req.isAuthenticated(), user: req.user, categories: categories});
+                });
             }
-        });
-    } else {
-        res.render('editPost', {files: files, post: '', loggedIn: req.isAuthenticated(), user: req.user});
-    }
-
+            database.close();
+        } else {
+            console.log('Database is not connected.');
+        }
+    });
 });
 
 postRouter.route('/manage').all(function(req, res, next) {
@@ -72,12 +81,11 @@ postRouter.route('/manage').all(function(req, res, next) {
         res.redirect('/auth/login');
     }
 }).get(function(req, res) {
-    var url = 'mongodb://localhost:27017/postLibrary';
+    var url = db.url;
 
     mongoClient.connect(url, function(err, database) {
 
         if (database.isConnected()) {
-            console.log('Database is connected. Attempting function calls.');
             var myDb = database.db('postLibrary');
             var postCollection = myDb.collection('post');
 
@@ -103,6 +111,7 @@ postRouter.route('/write').all(function(req, res, next) {
 }).post(function(req, res) {
     let title = req.body['title'];
     let content = req.body['content'];
+    let category = req.body['category'];
     let timestamp = new Date();
     let thumbnail = '';
 
@@ -121,10 +130,11 @@ postRouter.route('/write').all(function(req, res, next) {
             thumbnail: thumbnail,
             published: false,
             author: req.user._id,
+            category: category,
             tag: ''
         };
 
-    var url = 'mongodb://localhost:27017/postLibrary';
+    var url = db.url;
 
     mongoClient.connect(url, function(err, database) {
         if (err) {
@@ -162,8 +172,10 @@ postRouter.route('/write').all(function(req, res, next) {
 
 // This should have something akin to a search engine. It might be fun to try and get elastcsearch going on this project.
 postRouter.route('/search').get(function(req, res) {
-    var url = 'mongodb://localhost:27017/postLibrary';
+    var url = db.url;
 
+    category = req.query.category;
+    
     mongoClient.connect(url, function(err, database) {
 
         if (database.isConnected()) {
@@ -172,7 +184,8 @@ postRouter.route('/search').get(function(req, res) {
             var userCollection = myDb.collection('user');
 
             var currentPosts = [];
-            postCollection.find().sort({timestamp: -1}).toArray(function(err, results) {
+            var query = { published: true };
+            postCollection.find(query).sort({timestamp: -1}).toArray(function(err, results) {
                 currentPosts = results;
                 
                 for(var i=0; i<currentPosts.length; i++) {
@@ -231,12 +244,63 @@ postRouter.route("/fileUpload").all(function(req, res, next) {
     res.redirect('/post/manageFiles');
 });
 
+postRouter.route('/delete').all(function(req, res, next) {
+    if(req.isAuthenticated()) {
+        next();
+    } else {
+        res.redirect('/auth/login');
+    }
+}).get(function(req, res) {
+    let postID = req.query.postID;
+    let url = db.url;
+    
+    mongoClient.connect(url, function(err, database) {
+        var myDb = database.db('postLibrary');
+        var collection = myDb.collection('post');
+        
+        var query = {_id: new objectID(postID)};
+        collection.remove(query, function(err, result) {
+            if (err) throw err;
+            console.log(result.result.n + ' post(s) deleted.');
+            database.close();
+        })
+    })
+});
+
+postRouter.route('/publish').all(function(req, res, next) {
+    if(req.isAuthenticated()) {
+        next();
+    } else {
+        res.redirect('/auth/login');
+    }
+}).get(function(req, res) {
+    var url = db.url;
+    var postID = req.query.postID;
+    
+    mongoClient.connect(url, {useNewUrlParser: true}, function(err, database) {
+        if(database.isConnected) {
+            let myDb = database.db('postLibrary');
+            let collection = myDb.collection('post');
+            
+            var query = {_id: new objectID(postID)};
+            var values = {$set: {published: true}};
+            collection.updateOne(query, values, function(err, response) {
+                if (err) throw err;
+                console.log('Post has been published.');
+                database.close();
+            });
+        }
+    });
+    
+    res.redirect('/post/manage');
+});
+
 var callSite = function(req, res) {
     res.render('post', {posts: currentPosts, loggedIn: req.isAuthenticated(), user: req.user});
 }
 
 postRouter.route('/readPost').get(function(req, res) {
-    var url = 'mongodb://localhost:27017/postLibrary';
+    var url = db.url;
     var postID = req.query.postID;
     
     mongoClient.connect(url, function(err, database) {

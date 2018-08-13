@@ -1,0 +1,40 @@
+<html>
+    <head>
+        <% include ../partial/head.ejs %>
+    </head>
+    <body>
+        <div class="jumbotron">
+            <div class="container text-center">
+                <h1>Great Thoughts Blog</h1>
+                <p>This is the description</p>
+            </div>
+        </div>
+        
+        <%- include ../partial/navbar.ejs %>
+        
+        <div class="container">
+            <div class="row">
+                <a class="btn btn-success" href="/category/edit">
+                    New Category
+                </a>
+            </div>
+            <table class="table table-condensed table-hover">
+                <thead>
+                    <tr>
+                        <td><b>Filename</b></td>
+                        <td><b>Action</b></td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% for(var i=0; i<categories.length; i++) { %>
+                    <tr>
+                        <td class="col-md-10"><%= categories[i].name %></td>
+                        <td class="col-md-1"><a class="btn btn-danger" href="/category/delete?categoryID=<%=categories[i]._id  %>">Delete</a></td>
+                        <td class="col-md-1"><a class="btn btn-primary" href="/category/edit?categoryID=<%=categories[i]._id%>">Edit</a></td>
+                    </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </body>
+</html>

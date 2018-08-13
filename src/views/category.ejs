@@ -1,0 +1,22 @@
+<html>
+    <head>
+        <% include ../partial/head.ejs %>
+    </head>
+    <body>
+        <div class="jumbotron">
+            <div class="container text-center">
+                <h1>Great Thoughts Blog</h1>
+                <p>This is the description</p>
+            </div>
+        </div>
+        
+        <% include ../partial/navbar.ejs %>
+        
+        <div class="container">
+            <% for(var i=0; i<categories.length; i++) { %>
+            <h6><%= categories[i].name%></h6>
+            <% } %>
+        </div>
+        
+    </body>
+</html>

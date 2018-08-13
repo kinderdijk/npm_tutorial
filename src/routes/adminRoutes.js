@@ -1,9 +1,17 @@
 var express = require('express');
 var adminRouter = express.Router();
 var mongodb = require('mongodb').MongoClient;
+var db = require('../config/database');
 
-adminRouter.route('/configureStartPage').get(function(req, res) {
-    var url = 'mongodb://localhost:27017/postLibrary';
+adminRouter.route('/configureStartPage').all(function(req,res,next) {
+    if(req.isAuthenticated()){
+        //if user is logged in, req.isAuthenticated() will return true 
+        next();
+    } else{
+        res.redirect('/auth/login');
+    }
+}).get(function(req, res) {
+    var url = db.url;
 
     mongodb.connect(url, function(err, database) {
         var myDb = database.db('postLibrary');
@@ -15,7 +23,7 @@ adminRouter.route('/configureStartPage').get(function(req, res) {
 
             database.close();   
             console.log('Results: ' + currentPosts);
-            res.render('configureStartPage', {currentPosts: currentPosts});
+            res.render('configureStartPage', {loggedIn: req.isAuthenticated(), user: req.user, currentPosts: currentPosts});
         });
     });
 });

@@ -51,22 +51,34 @@ app.use('/admin', adminRouter);
 var authRouter = require('./src/routes/authRoutes');
 app.use('/auth', authRouter);
 
+var categoryRouter = require('./src/routes/categoryRoutes');
+app.use('/category', categoryRouter);
+
+var searchRouter = require('./src/routes/searchRoutes');
+app.use('/search', searchRouter);
+
 app.get('/', function(req, res) {    
     var latestPost = 'This is not the latest post.';
-    mongoClient.connect(db.url, function(err, database) {
+    mongoClient.connect(db.url, {useNewUrlParser: true}, function(err, database) {
         assert.equal(null, err);
         
         var myDb = database.db('postLibrary');
         var collection = myDb.collection('post');
+        
+        var categoryCollection = myDb.collection('category');
+        var categories = [];
+        categoryCollection.find().toArray(function(err, result) {
+            categories = result;
+        });
         
         var mysort = { timestamp: -1 };
         collection.find().sort(mysort).toArray(function(err, result) {
             database.close()
             if(result[0]) {
                 latestPost = result[0].content;
-                res.render('intro.ejs', {post: latestPost, loggedIn: req.isAuthenticated(), user: req.user});
+                res.render('intro', {post: latestPost, loggedIn: req.isAuthenticated(), user: req.user, categories: categories});
             } else {
-                res.render('intro', {post: 'Latest post', loggedIn: req.isAuthenticated(), user: req.user});
+                res.render('intro', {post: 'Latest post', loggedIn: req.isAuthenticated(), user: req.user, categories: categories});
             }
         });
     });
